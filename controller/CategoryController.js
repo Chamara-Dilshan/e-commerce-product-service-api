@@ -2,7 +2,7 @@ const CategorySchema = require('../model/CategorySchema');
 
 //save
 const createCategory = async (request, response) => {
-    console.log("Hi We are gonna print the body data");
+    console.log("Hi We are gonna print the Body Data");
     console.log(request.body);
 };
 
