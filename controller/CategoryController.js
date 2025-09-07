@@ -1,16 +1,13 @@
-const CategorySchema = require('../model/CategorySchema');
+const CategorySchema  = require('../model/CategorySchema');
 
 //create (POST)
 const createCategory = async (request, response) => {
 
     try {
-
-        const {categoryName, file, countryId} = request.body;
-        if (!categoryName || !file || !countryId) {
+        const {categoryName, file, countryIds} = request.body;
+        if (!categoryName || !file || !countryIds) {
             return response.status(400).json({code: 400, message: 'Required fields are missing', data: null});
         }
-
-        console.log("Hi We are gonna print the Body Data");
 
         const category=new CategorySchema({
             categoryName:categoryName,
@@ -31,26 +28,49 @@ const createCategory = async (request, response) => {
                 },
             ]
             });
-
         const saveData = await category.save();
-        console.log(result);
-        response.status(201).json({code:201, message:'Category Created Successfully', data:result});
+        return response.status(201).json({code:201, message:'Category Created Successfully', data:saveData});
             
     } catch (error) {
         console.log(error);
         response.status(500).json({code:500, message:'Category Creation Failed', error:error});
-    }
-   
+    } 
 };
 
 //update (PUT)
 const updateCategory = async (request, response) => {
-    console.log(request.body);
+    try {
+        const {categoryName} = request.body;
+        if (!categoryName) {
+            return response.status(400).json({code: 400, message: 'Required fields are missing', data: null});
+        }
+        const updateData = await CategorySchema.findOneAndUpdate({'_id':request.params.id},{
+            $set:{
+                categoryName:categoryName
+            }
+        }, {new:true});
+
+        return response.status(200).json({code:200, message:'Category Updated Successfully', data:updateData});
+            
+    } catch (error) {
+        console.log(error);
+        response.status(500).json({code:500, message:'Category Updated Failed', error:error});
+    }
+   
 };
 
 //delete
 const deleteCategory = async (request, response) => {
-    console.log(request.body);
+    try {
+        if (!request.params.id) {
+            return response.status(400).json({code: 400, message: 'Required fields are missing', data: null});
+        }
+        const deletedData = await CategorySchema.findOneAndDelete({'_id':request.params.id});
+        return response.status(204).json({code:204, message:'Category deleted Successfully', data:deletedData});
+            
+    } catch (error) {
+        response.status(500).json({code:500, message:'Category deleted Failed', error:error});
+    }
 };
 
 //find by id
