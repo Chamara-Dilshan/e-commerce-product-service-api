@@ -99,7 +99,7 @@ const findAllCategories = async (request, response) => {
         const pageIndex = parseInt(page);
         const pageSize = parseInt(size);
         const query = {};
-        
+
         if (searchText) {
             query.$text = { $search: searchText };
         }
@@ -112,7 +112,6 @@ const findAllCategories = async (request, response) => {
     }catch (error) {
         response.status(500).json({code:500, message:'Something went wrong...', error:error});
     }
-
 };
 
 module.exports = {

@@ -2,12 +2,27 @@ const mongoose = require('mongoose');
 
 const DiscountSchema 
     = new mongoose.Schema({
-    discount_name: { type: String, required: true },
-    percentage: { type: Number, required: true },
-    start_date: { type: Date, required: true },
-    end_date: { type: Date, required: true },
-    last_update: { type: Date, default: Date.now },
-    active_status: { type: Boolean, default: true }
+    discountName: { 
+        type: String, 
+        required: true 
+    },
+    percentage: { 
+        type: Number,
+        required: true 
+    },
+    startDate: { 
+        type: Date, 
+        required: true 
+    },
+    endDate: { 
+        type: Date, 
+        required: true 
+    },
+    lastUpdate: { 
+        type: Date, 
+        default: 
+        Date.now 
+    },
 });
 
-module.exports = mongoose.model('discount', DiscountSchema);
+module.exports = mongoose.model('discounts', DiscountSchema);

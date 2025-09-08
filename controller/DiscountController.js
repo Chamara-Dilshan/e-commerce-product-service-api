@@ -1,14 +1,18 @@
-const Discount = require('../model/DiscountSchema');
+const DiscountSchema = require('../model/DiscountSchema');
 
 // Create (POST)
 const createDiscount = async (request, response) => {
     try {
-        const { discount_name, percentage, start_date, end_date } = request.body;
-        if (!discount_name || !percentage || !start_date || !end_date) {
+        const { discountName, percentage, startDate, endDate, lastUpdate } = request.body;
+        if (!discountName || !percentage || !startDate || !endDate || !lastUpdate) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const discount = new Discount({
-            ...request.body
+        const discount = new DiscountSchema({
+            discountName:discountName,
+            percentage:percentage,
+            startDate:startDate,
+            endDate:endDate,
+            lastUpdate:lastUpdate
         });
         const saveData = await discount.save();
         return response.status(201).json({ code: 201, message: 'Discount Created Successfully...', data: saveData });
@@ -20,13 +24,23 @@ const createDiscount = async (request, response) => {
 // Update (PUT)
 const updateDiscount = async (request, response) => {
     try {
-        const updateData = await Discount.findOneAndUpdate({ _id: request.params.id }, request.body, { new: true });
-        if (!updateData) {
-            return response.status(404).json({ code: 404, message: 'Discount not found...', data: null });
+        const {discountName, percentage, startDate, endDate, lastUpdate} = request.body;
+        if (!discountName || !percentage || !startDate || !endDate || !lastUpdate) {
+            return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        return response.status(200).json({ code: 200, message: 'Discount Updated Successfully...', data: updateData });
+        const updateData = await DiscountSchema.findOneAndUpdate({'_id':request.params.id},{
+            $set:{
+            discountName:discountName,
+            percentage:percentage,
+            startDate:startDate,
+            endDate:endDate,
+            lastUpdate:lastUpdate
+            }
+        }, {new:true});
+        return response.status(200).json({code:200, message:'Discount Updated Successfully...', data:updateData});
+            
     } catch (error) {
-        response.status(500).json({ code: 500, message: 'Discount Update Failed...', error });
+        response.status(500).json({code:500, message:'Discount Updated Failed...', error:error});
     }
 };
 
@@ -36,7 +50,7 @@ const deleteDiscount = async (request, response) => {
         if (!request.params.id) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const deletedData = await Discount.findOneAndDelete({ _id: request.params.id });
+        const deletedData = await DiscountSchema.findOneAndDelete({ _id: request.params.id });
         if (!deletedData) {
             return response.status(404).json({ code: 404, message: 'Discount not found...', data: null });
         }
@@ -52,7 +66,7 @@ const findDiscountById = async (request, response) => {
         if (!request.params.id) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const discountData = await Discount.findById({ _id: request.params.id });
+        const discountData = await DiscountSchema.findById({ _id: request.params.id });
         if (discountData) {
             return response.status(200).json({ code: 200, message: 'Discount data found...', data: discountData });
         }
@@ -73,10 +87,10 @@ const findAllDiscounts = async (request, response) => {
             query.$text = { $search: searchText };
         }
         const skip = (pageIndex - 1) * pageSize;
-        const discountList = await Discount.find(query)
+        const discountList = await DiscountSchema.find(query)
             .limit(pageSize)
             .skip(skip);
-        const discountListCount = await Discount.countDocuments(query);
+        const discountListCount = await DiscountSchema.countDocuments(query);
         return response.status(200).json({ code: 200, message: 'Discount data found...', data: { list: discountList, dataCount: discountListCount } });
     } catch (error) {
         response.status(500).json({ code: 500, message: 'Something went wrong...', error });
