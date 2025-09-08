@@ -12,6 +12,12 @@ const serverPort = process.env.SERVER_PORT || 3000;
 
 //==========================================
 const CategoryRoute = require('./route/CategoryRoute');
+const CartRoute = require('./route/CartRoute');
+const BookmarkRoute = require('./route/BookmarkRoute');
+const ReviewRoute = require('./route/ReviewRoute');
+const ProductRoute = require('./route/ProductRoute');
+const DiscountRoute = require('./route/DiscountRoute');
+const CountryRoute = require('./route/CountryRoute');
 //==========================================
 
 try {
@@ -31,4 +37,10 @@ app.get('/test-api', (request, response) => {
 // http://localhost:3000/api/v1/categories/create-category (POST)
 //==========================================
 app.use('/api/v1/categories', CategoryRoute);
+app.use('/api/v1/carts', CartRoute);
+app.use('/api/v1/bookmarks', BookmarkRoute);
+app.use('/api/v1/reviews', ReviewRoute);
+app.use('/api/v1/products', ProductRoute);
+app.use('/api/v1/discounts', DiscountRoute);
+app.use('/api/v1/countries', CountryRoute);
 //==========================================
