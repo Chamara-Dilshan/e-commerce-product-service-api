@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const ReviewSchema = new mongoose.Schema({
+const ReviewSchema 
+    = new mongoose.Schema({
     order_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'order' },
     message: { type: String },
     created_date: { type: Date, default: Date.now },
