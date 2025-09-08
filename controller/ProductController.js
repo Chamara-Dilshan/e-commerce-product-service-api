@@ -1,14 +1,30 @@
+const ProductSchema = require('../model/ProductSchema');
 const Product = require('../model/ProductSchema');
 
 // Create (POST)
 const createProduct = async (request, response) => {
     try {
-        const { product_name, actual_price, qty, categories } = request.body;
-        if (!product_name || !actual_price || !qty || !categories || !Array.isArray(categories) || categories.length === 0) {
+        const { productName, file , actualPrice, oldPrice, qty, description, discount, categoryId } = request.body;
+        if (!productName || !file ||!actualPrice ||!oldPrice || !qty || !description ||!discount ||!categoryId ) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const product = new Product({
-            ...request.body
+        const product = new ProductSchema({
+            productName:productName,
+            images:[
+                {
+                    hash:'Temp Hash', 
+                    resourceUrl:'https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Original_Doge_meme.jpg/250px-Original_Doge_meme.jpg', 
+                    fileName:'Temp File Name', 
+                    directory:'Temp Directory'
+                }
+            ],
+            actualPrice:actualPrice,
+            oldPrice:oldPrice,
+            qty:qty,
+            description:description,
+            discount:discount,
+            categoryId:categoryId,
+
         });
         const saveData = await product.save();
         return response.status(201).json({ code: 201, message: 'Product Created Successfully...', data: saveData });
