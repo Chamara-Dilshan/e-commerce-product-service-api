@@ -1,18 +1,17 @@
 const mongoose = require('mongoose');
 
-const FlagSchema 
-    = new mongoose.Schema({
-        hash: String,
-        resource_url: String,
-        directory: String,
-        file_name: String
-}, { _id: false });
-
 const CountrySchema 
     = new mongoose.Schema({
-    country_name: { type: String, required: true },
-    country_code: { type: String, required: true },
-    flag: { type: FlagSchema, default: {} }
+    countryName: { 
+        type: String, 
+        required: true 
+    },
+    countryCode: { 
+        type: String, 
+    },
+    flag: { 
+        type: Object
+    }
 });
 
-module.exports = mongoose.model('country', CountrySchema);
+module.exports = mongoose.model('countries', CountrySchema);

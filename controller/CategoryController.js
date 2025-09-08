@@ -49,11 +49,9 @@ const updateCategory = async (request, response) => {
                 categoryName:categoryName
             }
         }, {new:true});
-
         return response.status(200).json({code:200, message:'Category Updated Successfully...', data:updateData});
             
     } catch (error) {
-        console.log(error);
         response.status(500).json({code:500, message:'Category Updated Failed...', error:error});
     }
    
@@ -66,6 +64,9 @@ const deleteCategory = async (request, response) => {
             return response.status(400).json({code: 400, message: 'Required fields are missing...', data: null});
         }
         const deletedData = await CategorySchema.findOneAndDelete({'_id':request.params.id});
+        if (!deletedData) {
+            return response.status(404).json({ code: 404, message: 'Category not found...', data: null });
+        }
         return response.status(204).json({code:204, message:'Category deleted Successfully...', data:deletedData});
             
     } catch (error) {
@@ -83,7 +84,6 @@ const findCategoryById = async (request, response) => {
         if(categoryData){
             return response.status(200).json({code:200, message:'Category data found...', data:categoryData});
         }
-
         return response.status(404).json({code:404, message:'Category data not found...', data:categoryData});
             
     } catch (error) {
@@ -98,8 +98,8 @@ const findAllCategories = async (request, response) => {
         const {searchText ,page = 1, size = 10} = request.query;
         const pageIndex = parseInt(page);
         const pageSize = parseInt(size);
-
         const query = {};
+        
         if (searchText) {
             query.$text = { $search: searchText };
         }
@@ -116,5 +116,9 @@ const findAllCategories = async (request, response) => {
 };
 
 module.exports = {
-    createCategory, updateCategory, deleteCategory, findCategoryById, findAllCategories
+    createCategory, 
+    updateCategory, 
+    deleteCategory, 
+    findCategoryById, 
+    findAllCategories
 }

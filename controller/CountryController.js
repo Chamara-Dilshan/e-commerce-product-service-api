@@ -1,14 +1,21 @@
-const Country = require('../model/CountrySchema');
+const CountrySchema = require('../model/CountrySchema');
 
 // Create (POST)
 const createCountry = async (request, response) => {
     try {
-        const { country_name, country_code } = request.body;
-        if (!country_name || !country_code) {
+        const { countryName, file, countryCode } = request.body;
+        if (!countryName ||!file ||!countryCode) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const country = new Country({
-            ...request.body
+        const country = new CountrySchema({
+            countryName:countryName,
+            flag:{
+                hash:'Temp Hash', 
+                resourceUrl:'https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Original_Doge_meme.jpg/250px-Original_Doge_meme.jpg', 
+                fileName:'Temp File Name', 
+                directory:'Temp Directory'
+            },
+            countryCode:countryCode,
         });
         const saveData = await country.save();
         return response.status(201).json({ code: 201, message: 'Country Created Successfully...', data: saveData });
@@ -20,11 +27,17 @@ const createCountry = async (request, response) => {
 // Update (PUT)
 const updateCountry = async (request, response) => {
     try {
-        const updateData = await Country.findOneAndUpdate({ _id: request.params.id }, request.body, { new: true });
-        if (!updateData) {
-            return response.status(404).json({ code: 404, message: 'Country not found...', data: null });
+        const {countryName, countryCode} = request.body;
+        if (!countryName || !countryCode) {
+            return response.status(400).json({code: 400, message: 'Required fields are missing...', data: null});
         }
-        return response.status(200).json({ code: 200, message: 'Country Updated Successfully...', data: updateData });
+        const updateData = await CountrySchema.findOneAndUpdate({'_id':request.params.id},{
+            $set:{
+                countryName:countryName,
+                countryCode:countryCode
+            }
+            }, {new:true});
+            return response.status(200).json({code:200, message:'Country Updated Successfully...', data:updateData});
     } catch (error) {
         response.status(500).json({ code: 500, message: 'Country Update Failed...', error });
     }
@@ -36,7 +49,7 @@ const deleteCountry = async (request, response) => {
         if (!request.params.id) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const deletedData = await Country.findOneAndDelete({ _id: request.params.id });
+        const deletedData = await CountrySchema.findOneAndDelete({ _id: request.params.id });
         if (!deletedData) {
             return response.status(404).json({ code: 404, message: 'Country not found...', data: null });
         }
@@ -52,7 +65,7 @@ const findCountryById = async (request, response) => {
         if (!request.params.id) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const countryData = await Country.findById({ _id: request.params.id });
+        const countryData = await CountrySchema.findById({ _id: request.params.id });
         if (countryData) {
             return response.status(200).json({ code: 200, message: 'Country data found...', data: countryData });
         }
@@ -69,14 +82,15 @@ const findAllCountries = async (request, response) => {
         const pageIndex = parseInt(page);
         const pageSize = parseInt(size);
         const query = {};
+        
         if (searchText) {
             query.$text = { $search: searchText };
         }
         const skip = (pageIndex - 1) * pageSize;
-        const countryList = await Country.find(query)
+        const countryList = await CountrySchema.find(query)
             .limit(pageSize)
             .skip(skip);
-        const countryListCount = await Country.countDocuments(query);
+        const countryListCount = await CountrySchema.countDocuments(query);
         return response.status(200).json({ code: 200, message: 'Country data found...', data: { list: countryList, dataCount: countryListCount } });
     } catch (error) {
         response.status(500).json({ code: 500, message: 'Something went wrong...', error });
