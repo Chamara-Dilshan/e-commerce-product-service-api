@@ -36,10 +36,21 @@ const createProduct = async (request, response) => {
 // Update (PUT)
 const updateProduct = async (request, response) => {
     try {
-        const updateData = await Product.findOneAndUpdate({ _id: request.params.id }, request.body, { new: true });
-        if (!updateData) {
-            return response.status(404).json({ code: 404, message: 'Product not found...', data: null });
+        const {productName, actualPrice, oldPrice, qty, description, discount, categoryId } = request.body;
+        if (!productName ||!actualPrice ||!oldPrice || !qty || !description ||!discount ||!categoryId ) {
+            return response.status(400).json({code: 400, message: 'Required fields are missing...', data: null});
         }
+        const updateData = await ProductSchema.findOneAndUpdate({'_id':request.params.id},{
+            $set:{
+                productName:productName,
+                actualPrice:actualPrice,
+                oldPrice:oldPrice,
+                qty:qty,
+                description:description,
+                discount:discount,
+                categoryId:categoryId,
+            }
+        }, {new:true});
         return response.status(200).json({ code: 200, message: 'Product Updated Successfully...', data: updateData });
     } catch (error) {
         response.status(500).json({ code: 500, message: 'Product Update Failed...', error });
@@ -52,7 +63,7 @@ const deleteProduct = async (request, response) => {
         if (!request.params.id) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const deletedData = await Product.findOneAndDelete({ _id: request.params.id });
+        const deletedData = await ProductSchema.findOneAndDelete({ _id: request.params.id });
         if (!deletedData) {
             return response.status(404).json({ code: 404, message: 'Product not found...', data: null });
         }
@@ -68,7 +79,7 @@ const findProductById = async (request, response) => {
         if (!request.params.id) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
-        const productData = await Product.findById({ _id: request.params.id });
+        const productData = await ProductSchema.findById({ _id: request.params.id });
         if (productData) {
             return response.status(200).json({ code: 200, message: 'Product data found...', data: productData });
         }
@@ -89,10 +100,10 @@ const findAllProducts = async (request, response) => {
             query.$text = { $search: searchText };
         }
         const skip = (pageIndex - 1) * pageSize;
-        const productList = await Product.find(query)
+        const productList = await ProductSchema.find(query)
             .limit(pageSize)
             .skip(skip);
-        const productListCount = await Product.countDocuments(query);
+        const productListCount = await ProductSchema.countDocuments(query);
         return response.status(200).json({ code: 200, message: 'Product data found...', data: { list: productList, dataCount: productListCount } });
     } catch (error) {
         response.status(500).json({ code: 500, message: 'Something went wrong...', error });
