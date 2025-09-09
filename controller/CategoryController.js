@@ -32,7 +32,6 @@ const createCategory = async (request, response) => {
         return response.status(201).json({code:201, message:'Category Created Successfully...', data:saveData});
             
     } catch (error) {
-        console.log(error);
         response.status(500).json({code:500, message:'Category Creation Failed...', error:error});
     } 
 };
@@ -98,8 +97,8 @@ const findAllCategories = async (request, response) => {
         const {searchText ,page = 1, size = 10} = request.query;
         const pageIndex = parseInt(page);
         const pageSize = parseInt(size);
+        
         const query = {};
-
         if (searchText) {
             query.$text = { $search: searchText };
         }
