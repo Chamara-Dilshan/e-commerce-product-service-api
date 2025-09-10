@@ -19,4 +19,4 @@ const CartSchema
     }
 });
 
-module.exports = mongoose.model('carts', CartSchema);
+module.exports = mongoose.model('cart', CartSchema);

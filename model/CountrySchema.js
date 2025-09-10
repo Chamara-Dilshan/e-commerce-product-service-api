@@ -14,4 +14,4 @@ const CountrySchema
     }
 });
 
-module.exports = mongoose.model('countries', CountrySchema);
+module.exports = mongoose.model('country', CountrySchema);

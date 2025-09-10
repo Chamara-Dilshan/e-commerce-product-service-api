@@ -25,4 +25,4 @@ const DiscountSchema
     },
 });
 
-module.exports = mongoose.model('discounts', DiscountSchema);
+module.exports = mongoose.model('discount', DiscountSchema);
