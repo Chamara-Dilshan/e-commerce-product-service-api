@@ -1,4 +1,3 @@
-
 const CartSchema = require('../model/CartSchema');
 
 // Create (POST)
@@ -24,7 +23,7 @@ const createCart = async (request, response) => {
 // Update (PUT)
 const updateCart = async (request, response) => {
     try {
-         const { userId, productId, createdDate, qty } = request.body;
+        const { userId, productId, createdDate, qty } = request.body;
         if (!userId || !productId || !createdDate || !qty) {
             return response.status(400).json({ code: 400, message: 'Required fields are missing...', data: null });
         }
